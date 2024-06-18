@@ -1,0 +1,6 @@
+fasttext-wheel
+jieba
+pandas
+lime
+shap
+numpy
