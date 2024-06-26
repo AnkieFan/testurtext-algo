@@ -18,7 +18,7 @@ Run `python model/train.py`
 ## License
 Copyright (C) 2024 Ankie Fan at Department of Advanced Computing Sciences, Faculty of Science and Engineering, Maastricht University
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE.txt) file for more information.
+This project is licensed under the AGPL-3.0-or-later License. See the [LICENSE](LICENSE.txt) file for more information.
 
 # Contact
 If you have any questions or suggestions, feel free to leave in [Discussions](https://github.com/AnkieFan/testurtext-algo/discussions)
