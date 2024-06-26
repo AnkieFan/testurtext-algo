@@ -163,7 +163,5 @@ cython_debug/
 train.txt
 *.DS_Store
 *.ipynb
-*.csv
 *.xlsx
-*.json
 test.txt

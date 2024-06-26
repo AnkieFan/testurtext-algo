@@ -13,7 +13,7 @@ label2ind = {}
 def get_paragraphs(text:str, min_length=200):
     text = re.sub(r'第.+章', '', text)
     text = re.sub(r'(^\[\d+\].*\n?|^[①-⑩].*\n?)', '', text, flags=re.MULTILINE)
-    text = re.sub(r'\[\d+\]|[\u2460-\u24FF]', '', text)
+    text = re.sub(r'\[\d+\]|[\u2460-\u24FF]', '', text) # Circled 1 to 100. Normally used as citation.
 
     text_no_n = text.rstrip()
     paragraphs = [t.strip() for t in text_no_n.split("\n") if len(t.strip()) > 0]
@@ -22,6 +22,7 @@ def get_paragraphs(text:str, min_length=200):
     final_paragraphs = []
     current_paragraph = ""
     
+    # Accumulate paragraphs until it reaches the minimum length
     for paragraph in filtered_paragraphs:
         if len(current_paragraph) > 0:
             current_paragraph += '\n'
@@ -52,7 +53,7 @@ def preprocess(folders_path, out_path = 'data/files/train.txt'): # For FastText 
                     f = open(file_path,"r",encoding='utf-8')
                     author = file_name.split('_')[0]
                     if author not in label2ind.keys():
-                        label2ind[author] = "__label__" + str(len(label2ind))
+                        label2ind[author] = "__label__" + str(len(label2ind)) # FastText label format
                     paras = get_paragraphs(f.read())
                     paras = clean_paragraph(paras, label2ind[author])
 
@@ -113,6 +114,7 @@ def statistics(folder_path:str):
     return pd.DataFrame(sta)
 
 def text_predict(text):
+    # For user input preprocess
     text = text.rstrip()
     text = text.replace('\n', '')
     text = text.replace('·', ' ')
@@ -127,18 +129,6 @@ def text_predict(text):
     words = jieba.lcut(text)
     return " ".join(words)
 
-def get_works_contained(author_names):
-    author_names = []
-    df = pd.read_excel('data/files/info.xlsx')
-    works_contained = {}
-    for author in author_names:
-        author_row = df.loc[df['Author'] == author]
-        if author_row.empty:
-            works_contained[author] = None
-        else:
-            works_contained[author] = author_row['Works Contained'].values[0]
-    return works_contained
-
 if __name__ == '__main__':
     # Foreign Authors:
     df = statistics('data/Foreign')
@@ -148,8 +138,10 @@ if __name__ == '__main__':
     # Chinese Authors:
     df = statistics('data/Chinese')
     df.to_excel('data/files/info_CN.xlsx')
-    preprocess(['data/燃冬有好兆头', 'data/Chinese'], out_path='data/files/train_C.txt')
+    preprocess(['data/Chinese'], out_path='data/files/train_C.txt')
     
+    # NOTE: this dictionary stores all authors, including both Chinese and Foreign authors
+    # If you want to store them separately, you should change the implementation here
     label2ind_json = open('data/files/label2ind.json', "w", encoding='utf-8') 
     label2ind_json.write(json.dumps(label2ind, ensure_ascii = False))
     

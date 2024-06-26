@@ -19,7 +19,6 @@ class LimeExplainer(BaseExplainer):
         return new_sents
 
     def explain(self, text, top3_author_ids):
-
         if(len(self.split_rule(text)) <= 1):
             return text.replace(' ', ''), None
         

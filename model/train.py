@@ -1,20 +1,21 @@
 import fasttext
-import pandas as pd
+import json
 
 def fit(train_set_path):
-    return fasttext.train_supervised(input=train_set_path, wordNgrams=2, epoch=200, lr=0.1, dim=300)
+    return fasttext.train_supervised(input=train_set_path, wordNgrams=2, epoch=20, lr=0.1, dim=300) 
 
-def predict_formated_results(text, classifier):
+def predict(text, classifier, k=3):
     """
-    
     Returns:
-        list: [[id, percentage], ...]
+        list: [[id, author name, percentage], ...]
     """
-    labels, probs = classifier.predict(text, k = 3)
+    labels, probs = classifier.predict(text, k = k)
+    label2ind = json.load(open('data/files/label2ind.json', 'r', encoding='utf-8'))
     result = []
-    for i in range(3):
+    for i in range(k):
         id = labels[i][9:]
-        result.append([id, round(probs[i] * 100, 2)])
+        name = next(key for key, val in label2ind.items() if val == labels[i])
+        result.append([id,name, round(probs[i] * 100, 2)])
     return result
 
 if __name__ == '__main__':
